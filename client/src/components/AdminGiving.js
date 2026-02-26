@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Form, Button, Table, Image, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 
 const AdminGiving = () => {
   // --- STATE MANAGEMENT ---
@@ -17,8 +17,7 @@ const AdminGiving = () => {
   useEffect(() => {
     const fetchCauses = async () => {
       try {
-        // NOTE: Using 127.0.0.1 to fix connection issues
-        const res = await axios.get('http://127.0.0.1:5000/api/giving');
+        const res = await api.get('/giving');
         setCauses(res.data);
       } catch (err) {
         console.error("Error loading causes:", err);
@@ -38,8 +37,7 @@ const AdminGiving = () => {
     if (!form.title || !form.desc) return alert("Please fill in a Title and Description");
 
     try {
-      // Send to Backend (using 127.0.0.1)
-      const res = await axios.post('http://127.0.0.1:5000/api/giving', form);
+      const res = await api.post('/giving', form);
       
       // Update UI with the new item from the database
       setCauses([res.data, ...causes]);
@@ -59,7 +57,7 @@ const AdminGiving = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this cause?")) {
       try {
-        await axios.delete(`http://127.0.0.1:5000/api/giving/${id}`);
+        await api.delete(`/giving/${id}`);
         // Remove from UI
         setCauses(causes.filter(c => c._id !== id));
       } catch (err) {

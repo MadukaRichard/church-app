@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Container, Card, Form, Button, Alert, Spinner } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion'; // Smooth animation
+import { motion } from 'framer-motion';
 
 const Login = () => {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -20,8 +20,7 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Connect to your server
-      const res = await axios.post('http://127.0.0.1:5000/api/auth/login', form);
+      const res = await api.post('/auth/login', form);
       localStorage.setItem('adminToken', res.data.token);
       navigate('/admin');
     } catch (err) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, ProgressBar, Badge, Modal } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 import SkeletonLoader from '../components/SkeletonLoader';
 
 const Give = () => {
@@ -25,7 +25,7 @@ const Give = () => {
     const fetchData = async () => {
       try {
         // A. Fetch Causes
-        const causesRes = await axios.get('http://127.0.0.1:5000/api/giving');
+        const causesRes = await api.get('/giving');
         setCauses(causesRes.data);
         
         // Automatically select the first cause if one exists
@@ -34,7 +34,7 @@ const Give = () => {
         }
 
         // B. Fetch Mission Goal (This was breaking before)
-        const missionRes = await axios.get('http://127.0.0.1:5000/api/mission');
+        const missionRes = await api.get('/mission');
         setMission(missionRes.data);
         
         setLoading(false);

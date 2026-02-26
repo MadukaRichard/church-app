@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Form, Button, Table, Alert, Badge } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 
 const AdminSermons = () => {
   // --- STATE ---
@@ -21,7 +21,7 @@ const AdminSermons = () => {
 
   const fetchSermons = async () => {
     try {
-      const res = await axios.get('http://127.0.0.1:5000/api/sermons');
+      const res = await api.get('/sermons');
       setSermons(res.data);
     } catch (err) {
       console.error("Error fetching sermons:", err);
@@ -38,7 +38,7 @@ const AdminSermons = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://127.0.0.1:5000/api/sermons', formData);
+      const res = await api.post('/sermons', formData);
       
       // Success!
       setMessage({ type: 'success', text: 'Success! Sermon added.' });
@@ -60,7 +60,7 @@ const AdminSermons = () => {
     if(!window.confirm("Are you sure you want to delete this sermon?")) return;
 
     try {
-      await axios.delete(`http://127.0.0.1:5000/api/sermons/${id}`);
+      await api.delete(`/sermons/${id}`);
       // Remove from UI
       setSermons(sermons.filter(s => s._id !== id));
     } catch (err) {

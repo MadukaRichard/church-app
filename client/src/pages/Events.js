@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Badge, Spinner, Modal } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 import SkeletonLoader from '../components/SkeletonLoader';
 
 const Events = () => {
@@ -19,8 +19,7 @@ const Events = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        // Fetching from your server instead of using dummy data
-        const res = await axios.get('http://127.0.0.1:5000/api/events');
+        const res = await api.get('/events');
         setEvents(res.data);
         setLoading(false);
       } catch (err) {

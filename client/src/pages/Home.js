@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, Card, Spinner, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import api from '../api';
 import { motion } from 'framer-motion';
 import SkeletonLoader from '../components/SkeletonLoader';
 
@@ -23,13 +23,13 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const heroRes = await axios.get('http://127.0.0.1:5000/api/hero');
+        const heroRes = await api.get('/hero');
         if (heroRes.data.length > 0) setHeroSlide(heroRes.data[0]);
 
-        const giveRes = await axios.get('http://127.0.0.1:5000/api/giving');
+        const giveRes = await api.get('/giving');
         if (giveRes.data.length > 0) setFeaturedCause(giveRes.data[0]);
 
-        const eventRes = await axios.get('http://127.0.0.1:5000/api/events');
+        const eventRes = await api.get('/events');
         setEvents(eventRes.data.slice(0, 3)); 
 
         setLoading(false);

@@ -1,10 +1,10 @@
 import axios from 'axios';
 
-// This is your "Central Command" for talking to the backend
+// This is your "Central Command" for talking to the backend.
+// In development, requests go through the proxy in package.json (http://localhost:5000).
+// In production, change this to your live server URL (e.g. https://yourserver.com/api).
 const api = axios.create({
-  // RIGHT NOW: We are using your local computer
-  // LATER (When deployed): We will change this ONE line to your live server URL
-  baseURL: 'http://127.0.0.1:5000/api'
+  baseURL: '/api'
 });
 
 export default api;

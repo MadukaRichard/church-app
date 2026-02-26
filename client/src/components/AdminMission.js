@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Card, ProgressBar, InputGroup } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 
 const AdminMission = () => {
   const [mission, setMission] = useState({ title: '', raised: 0, goal: 0 });
@@ -8,7 +8,7 @@ const AdminMission = () => {
 
   // Fetch current data
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/api/mission').then(res => setMission(res.data));
+    api.get('/mission').then(res => setMission(res.data));
   }, []);
 
   // Handle Input Changes
@@ -19,7 +19,7 @@ const AdminMission = () => {
   // Save Changes
   const handleSave = async () => {
     try {
-      await axios.put('http://127.0.0.1:5000/api/mission', mission);
+      await api.put('/mission', mission);
       setMessage('✅ Mission Updated Successfully!');
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {

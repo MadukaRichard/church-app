@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, InputGroup, Button, Badge, Spinner } from 'react-bootstrap';
-import axios from 'axios'; // <--- Using Axios for consistency
+import api from '../api';
 import SkeletonLoader from '../components/SkeletonLoader';
 
 const Sermons = () => {
@@ -12,8 +12,7 @@ const Sermons = () => {
   useEffect(() => {
     const fetchSermons = async () => {
       try {
-        // NOTE: Using 127.0.0.1 to match your Admin fix
-        const res = await axios.get('http://127.0.0.1:5000/api/sermons');
+        const res = await api.get('/sermons');
         setSermons(res.data);
         setLoading(false);
       } catch (err) {

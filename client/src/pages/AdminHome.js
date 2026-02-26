@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Form, Button, Table, Image, Alert } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 
 const AdminHome = () => {
   const [slides, setSlides] = useState([]);
@@ -22,8 +22,7 @@ const AdminHome = () => {
 
   const fetchSlides = async () => {
     try {
-      // FIX: Changed localhost to 127.0.0.1
-      const res = await axios.get('http://127.0.0.1:5000/api/hero');
+      const res = await api.get('/hero');
       setSlides(res.data);
     } catch (err) {
       console.error(err);
@@ -40,8 +39,7 @@ const AdminHome = () => {
     if (!form.title || !form.image) return alert("Title and Image are required");
 
     try {
-      // FIX: Changed localhost to 127.0.0.1
-      await axios.post('http://127.0.0.1:5000/api/hero', form);
+      await api.post('/hero', form);
       setMessage('✅ Slide Added!');
       fetchSlides(); // Refresh list
       setForm({ title: '', subtitle: '', image: '', link: '', buttonText: 'Learn More', textColor: 'white', overlayOpacity: 0.5 }); // Reset form
@@ -56,8 +54,7 @@ const AdminHome = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this slide?")) return;
     try {
-      // FIX: Changed localhost to 127.0.0.1
-      await axios.delete(`http://127.0.0.1:5000/api/hero/${id}`);
+      await api.delete(`/hero/${id}`);
       setSlides(slides.filter(s => s._id !== id));
     } catch (err) {
       console.error(err);

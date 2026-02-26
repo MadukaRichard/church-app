@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { Row, Col, Form, Button, Table, Card } from 'react-bootstrap';
-import axios from 'axios';
+import api from '../api';
 
 const AdminEvents = () => {
   const [events, setEvents] = useState([]);
   const [form, setForm] = useState({ title: '', date: '', desc: '', image: '' });
 
   useEffect(() => {
-    axios.get('http://127.0.0.1:5000/api/events').then(res => setEvents(res.data));
+    api.get('/events').then(res => setEvents(res.data));
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await axios.post('http://127.0.0.1:5000/api/events', form);
+    const res = await api.post('/events', form);
     setEvents([res.data, ...events]);
     setForm({ title: '', date: '', desc: '', image: '' });
   };
 
   const handleDelete = async (id) => {
-    await axios.delete(`http://127.0.0.1:5000/api/events/${id}`);
+    await api.delete(`/events/${id}`);
     setEvents(events.filter(e => e._id !== id));
   };
 
