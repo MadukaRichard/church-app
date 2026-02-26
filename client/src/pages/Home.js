@@ -27,10 +27,12 @@ const Home = () => {
         setHeroSlides(Array.isArray(heroRes.data) ? heroRes.data : []);
 
         const giveRes = await api.get('/giving');
-        if (giveRes.data.length > 0) setFeaturedCause(giveRes.data[0]);
+        const givingData = Array.isArray(giveRes.data) ? giveRes.data : [];
+        if (givingData.length > 0) setFeaturedCause(givingData[0]);
 
         const eventRes = await api.get('/events');
-        setEvents(eventRes.data.slice(0, 3)); 
+        const eventData = Array.isArray(eventRes.data) ? eventRes.data : [];
+        setEvents(eventData.slice(0, 3)); 
 
         setLoading(false);
       } catch (err) {
