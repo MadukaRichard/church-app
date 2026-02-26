@@ -24,7 +24,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const heroRes = await api.get('/hero');
-        setHeroSlides(heroRes.data);
+        setHeroSlides(Array.isArray(heroRes.data) ? heroRes.data : []);
 
         const giveRes = await api.get('/giving');
         if (giveRes.data.length > 0) setFeaturedCause(giveRes.data[0]);
