@@ -5,7 +5,9 @@ const HeroSlideSchema = new mongoose.Schema({
   subtitle: { type: String },
   image: { type: String, required: true },
   buttonText: { type: String, default: "Learn More" },
-  link: { type: String }
+  link: { type: String },
+  textColor: { type: String, default: "white" },
+  overlayOpacity: { type: Number, default: 0.5 }
 }, { timestamps: true });
 
 module.exports = mongoose.model('HeroSlide', HeroSlideSchema);

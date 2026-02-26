@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Form, ProgressBar, Badge, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const Give = () => {
   // --- STATE ---
@@ -8,6 +9,7 @@ const Give = () => {
   const [selectedCause, setSelectedCause] = useState(null);
   const [amount, setAmount] = useState('');
   const [prayerRequest, setPrayerRequest] = useState('');
+  const [loading, setLoading] = useState(true);
   
   // State for Mission Goal
   const [mission, setMission] = useState(null);
@@ -34,9 +36,12 @@ const Give = () => {
         // B. Fetch Mission Goal (This was breaking before)
         const missionRes = await axios.get('http://127.0.0.1:5000/api/mission');
         setMission(missionRes.data);
+        
+        setLoading(false);
 
       } catch (err) {
         console.error("Error fetching data:", err);
+        setLoading(false);
       }
     };
     fetchData();
@@ -55,7 +60,7 @@ const Give = () => {
     let message = `Hello! I would like to give $${amount} for *${causeTitle}*.`;
     
     if (prayerRequest.trim()) {
-      message += `\n\n🙏 *My Prayer Request:* ${prayerRequest}`;
+      message += `\n\n *My Prayer Request:* ${prayerRequest} Amen.`;
     }
 
     const encodedMessage = encodeURIComponent(message);
@@ -88,9 +93,15 @@ const Give = () => {
             <p className="text-muted mb-4">Select where you would like your seed to be sown today.</p>
             
             <Row>
-              {causes.length === 0 ? (
+              {loading ? (
+                [...Array(2)].map((_, i) => (
+                  <Col md={12} key={i} className="mb-3">
+                    <SkeletonLoader type="card" count={1} />
+                  </Col>
+                ))
+              ) : causes.length === 0 ? (
                  <div className="text-center py-5">
-                   <p className="text-muted">Loading giving options...</p>
+                   <p className="text-muted">No giving options available.</p>
                  </div>
               ) : (
                 causes.map((cause) => (
@@ -154,7 +165,27 @@ const Give = () => {
 
           {/* --- RIGHT COLUMN: THE GIVING FORM --- */}
           <Col lg={5}>
-            <Card className="shadow-lg border-0">
+            {loading ? (
+              <Card className="shadow-lg border-0">
+                <Card.Header className="bg-white border-0 pt-4 px-4">
+                  <div className="skeleton skeleton-text" style={{ width: '200px', height: '28px' }}></div>
+                </Card.Header>
+                <Card.Body className="p-4">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div>
+                      <div className="skeleton skeleton-text" style={{ width: '100px', height: '16px', marginBottom: '8px' }}></div>
+                      <div className="skeleton skeleton-button" style={{ width: '100%', height: '36px' }}></div>
+                    </div>
+                    <div>
+                      <div className="skeleton skeleton-text" style={{ width: '150px', height: '16px', marginBottom: '8px' }}></div>
+                      <div className="skeleton skeleton-button" style={{ width: '100%', height: '80px' }}></div>
+                    </div>
+                    <div className="skeleton skeleton-button" style={{ width: '100%', height: '44px' }}></div>
+                  </div>
+                </Card.Body>
+              </Card>
+            ) : (
+              <Card className="shadow-lg border-0">
               <Card.Header className="bg-white border-0 pt-4 px-4">
                 <h3 className="fw-bold text-success">2. Your Gift</h3>
               </Card.Header>
@@ -211,6 +242,7 @@ const Give = () => {
                 </Form>
               </Card.Body>
             </Card>
+            )}
           </Col>
         </Row>
       </Container>

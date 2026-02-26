@@ -9,7 +9,9 @@ const AdminHome = () => {
     subtitle: '',
     image: '',
     link: '',
-    buttonText: 'Learn More'
+    buttonText: 'Learn More',
+    textColor: 'white',
+    overlayOpacity: 0.5
   });
   const [message, setMessage] = useState('');
 
@@ -42,7 +44,7 @@ const AdminHome = () => {
       await axios.post('http://127.0.0.1:5000/api/hero', form);
       setMessage('✅ Slide Added!');
       fetchSlides(); // Refresh list
-      setForm({ title: '', subtitle: '', image: '', link: '', buttonText: 'Learn More' }); // Reset form
+      setForm({ title: '', subtitle: '', image: '', link: '', buttonText: 'Learn More', textColor: 'white', overlayOpacity: 0.5 }); // Reset form
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
       console.error(err);
@@ -86,6 +88,23 @@ const AdminHome = () => {
             <Form.Label>Button Link (Optional)</Form.Label>
             <Form.Control name="link" value={form.link} onChange={handleChange} placeholder="/sermons or https://youtube.com..." />
           </Form.Group>
+          <Row>
+            <Col xs={6}>
+              <Form.Group className="mb-2">
+                <Form.Label>Text Color</Form.Label>
+                <Form.Select name="textColor" value={form.textColor} onChange={handleChange}>
+                  <option value="white">White</option>
+                  <option value="#0F172A">Dark</option>
+                </Form.Select>
+              </Form.Group>
+            </Col>
+            <Col xs={6}>
+              <Form.Group className="mb-2">
+                <Form.Label>Overlay Opacity ({Math.round(form.overlayOpacity * 100)}%)</Form.Label>
+                <Form.Range name="overlayOpacity" min={0} max={1} step={0.1} value={form.overlayOpacity} onChange={handleChange} />
+              </Form.Group>
+            </Col>
+          </Row>
           <Button variant="primary" className="w-100 mt-3" onClick={handleAdd}>Publish Slide</Button>
         </Form>
       </Col>

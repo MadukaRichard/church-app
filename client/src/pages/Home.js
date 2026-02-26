@@ -3,6 +3,7 @@ import { Container, Row, Col, Button, Card, Spinner, Badge, Modal } from 'react-
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const Home = () => {
   const [heroSlide, setHeroSlide] = useState(null);
@@ -46,7 +47,28 @@ const Home = () => {
     setShowModal(true);
   };
 
-  if (loading) return <div className="text-center py-5"><Spinner animation="border" variant="primary" /></div>;
+  if (loading) {
+    return (
+      <div style={{ backgroundColor: '#fff' }}>
+        <div style={{ height: '85vh', display: 'flex', alignItems: 'center' }}>
+          <Container>
+            <SkeletonLoader type="hero" />
+          </Container>
+        </div>
+        <div style={{ backgroundColor: '#F8FAFC', padding: '5rem 0' }}>
+          <Container>
+            <Row>
+              {[...Array(3)].map((_, i) => (
+                <Col md={6} lg={4} key={i} className="mb-4">
+                  <SkeletonLoader type="card" count={1} />
+                </Col>
+              ))}
+            </Row>
+          </Container>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ overflowX: 'hidden', backgroundColor: '#fff', fontFamily: 'sans-serif' }}>
@@ -54,7 +76,7 @@ const Home = () => {
       {/* --- 1. HERO SECTION --- */}
       <div 
         style={{ 
-          backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.4)), url(${heroSlide?.image || 'https://via.placeholder.com/1500'})`,
+          backgroundImage: `linear-gradient(rgba(15, 23, 42, ${heroSlide?.overlayOpacity ?? 0.5}), rgba(15, 23, 42, ${heroSlide?.overlayOpacity ?? 0.5})), url(${heroSlide?.image || 'https://via.placeholder.com/1500'})`,
           height: '85vh', 
           backgroundAttachment: 'scroll', 
           backgroundSize: 'cover',
@@ -63,7 +85,7 @@ const Home = () => {
           alignItems: 'center',
           justifyContent: 'center',
           textAlign: 'center',
-          color: 'white'
+          color: heroSlide?.textColor || 'white'
         }}
       >
         <Container>
@@ -72,10 +94,10 @@ const Home = () => {
             animate={{ opacity: 1, y: 0 }} 
             transition={{ duration: 0.8 }}
           >
-            <h1 className="display-3 fw-bolder mb-3">
+            <h1 className="display-2 fw-bolder mb-3"style={{ opacity: 0.7 }}>
               {heroSlide?.title || "WELCOME HOME"}
             </h1>
-            <p className="lead mb-4 fs-5 fw-normal" style={{ opacity: 0.9 }}>
+            <p className="lead mb-4 fs-5 fw-semibold" style={{ opacity: 1.0 }}>
               {heroSlide?.subtitle || "A place to belong, believe, and become."}
             </p>
             

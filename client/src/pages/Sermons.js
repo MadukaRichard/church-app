@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, InputGroup, Button, Badge, Spinner } from 'react-bootstrap';
 import axios from 'axios'; // <--- Using Axios for consistency
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const Sermons = () => {
   const [sermons, setSermons] = useState([]); // Stores the real data
@@ -53,10 +54,13 @@ const Sermons = () => {
       {/* --- VIDEO GRID --- */}
       <Container className="my-5">
         {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" variant="primary" />
-            <p className="mt-3 text-muted">Loading Library...</p>
-          </div>
+          <Row>
+            {[...Array(3)].map((_, i) => (
+              <Col md={6} lg={4} key={i} className="mb-4">
+                <SkeletonLoader type="card" count={1} />
+              </Col>
+            ))}
+          </Row>
         ) : (
           <Row>
             {filteredSermons.map((sermon) => (

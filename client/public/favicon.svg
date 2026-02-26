@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Steeple/Tower -->
+  <path d="M 40 20 L 50 5 L 60 20 Z" fill="#8B4513" stroke="#654321" stroke-width="1"/>
+  
+  <!-- Cross on top -->
+  <line x1="50" y1="8" x2="50" y2="25" stroke="#FFD700" stroke-width="2"/>
+  <line x1="45" y1="15" x2="55" y2="15" stroke="#FFD700" stroke-width="2"/>
+  
+  <!-- Main church building -->
+  <rect x="30" y="25" width="40" height="50" fill="#CD853F" stroke="#654321" stroke-width="2"/>
+  
+  <!-- Roof -->
+  <polygon points="30,25 50,10 70,25" fill="#8B4513" stroke="#654321" stroke-width="2"/>
+  
+  <!-- Door -->
+  <rect x="44" y="60" width="12" height="15" fill="#654321" stroke="#333" stroke-width="1"/>
+  <circle cx="54" cy="67.5" r="1.5" fill="#FFD700"/>
+  
+  <!-- Windows -->
+  <rect x="35" y="35" width="8" height="8" fill="#87CEEB" stroke="#333" stroke-width="0.5"/>
+  <line x1="39" y1="35" x2="39" y2="43" stroke="#333" stroke-width="0.5"/>
+  <line x1="35" y1="39" x2="43" y2="39" stroke="#333" stroke-width="0.5"/>
+  
+  <rect x="57" y="35" width="8" height="8" fill="#87CEEB" stroke="#333" stroke-width="0.5"/>
+  <line x1="61" y1="35" x2="61" y2="43" stroke="#333" stroke-width="0.5"/>
+  <line x1="57" y1="39" x2="65" y2="39" stroke="#333" stroke-width="0.5"/>
+  
+  <rect x="35" y="50" width="8" height="8" fill="#87CEEB" stroke="#333" stroke-width="0.5"/>
+  <line x1="39" y1="50" x2="39" y2="58" stroke="#333" stroke-width="0.5"/>
+  <line x1="35" y1="54" x2="43" y2="54" stroke="#333" stroke-width="0.5"/>
+  
+  <rect x="57" y="50" width="8" height="8" fill="#87CEEB" stroke="#333" stroke-width="0.5"/>
+  <line x1="61" y1="50" x2="61" y2="58" stroke="#333" stroke-width="0.5"/>
+  <line x1="57" y1="54" x2="65" y2="54" stroke="#333" stroke-width="0.5"/>
+  
+  <!-- Foundation -->
+  <rect x="30" y="75" width="40" height="5" fill="#696969" stroke="#333" stroke-width="1"/>
+</svg>

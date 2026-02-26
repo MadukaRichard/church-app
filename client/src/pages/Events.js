@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Card, Button, Badge, Spinner, Modal } from 'react-bootstrap';
 import axios from 'axios';
+import SkeletonLoader from '../components/SkeletonLoader';
 
 const Events = () => {
   const [events, setEvents] = useState([]);
@@ -48,9 +49,13 @@ const Events = () => {
 
       <Container className="my-5">
         {loading ? (
-          <div className="text-center py-5">
-            <Spinner animation="border" style={{ color: ACCENT }} />
-          </div>
+          <Row>
+            {[...Array(3)].map((_, i) => (
+              <Col md={6} lg={4} key={i} className="mb-4">
+                <SkeletonLoader type="card" count={1} />
+              </Col>
+            ))}
+          </Row>
         ) : events.length === 0 ? (
           <div className="text-center py-5">
             <h3 className="text-muted">No upcoming events scheduled.</h3>
