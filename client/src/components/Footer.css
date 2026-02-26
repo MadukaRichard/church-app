@@ -1,0 +1,135 @@
+/* ===== FOOTER ===== */
+/* Theme: matches app palette — DARK #0F172A, ACCENT #2563EB, LIGHT #F8FAFC */
+
+.footer-main {
+  background-color: #0F172A; /* matches app DARK */
+  color: #cbd5e1;
+  padding: 3rem 0 1.5rem;
+  border-top: 3px solid #2563EB; /* matches app ACCENT blue */
+}
+
+.footer-row {
+  margin-bottom: 1.5rem;
+}
+
+.footer-col {
+  margin-bottom: 2rem;
+}
+
+/* Brand */
+.footer-brand {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.75rem;
+}
+
+.footer-tagline {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+/* Social icons */
+.footer-socials {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.footer-social-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #1e293b;
+  color: #94a3b8;
+  font-size: 1rem;
+  text-decoration: none;
+  border: 1px solid #334155;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.footer-social-link:hover {
+  background-color: #2563EB; /* app ACCENT */
+  color: #fff;
+  border-color: #2563EB;
+}
+
+/* Section headings */
+.footer-heading {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #2563EB; /* app ACCENT */
+  margin-bottom: 0.75rem;
+}
+
+/* Links list */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-links li {
+  margin-bottom: 0.5rem;
+}
+
+.footer-links a {
+  color: #94a3b8;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #2563EB; /* app ACCENT */
+}
+
+/* Bottom bar */
+.footer-bottom {
+  border-top: 1px solid #1e293b;
+  padding-top: 1.25rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: #475569;
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 767px) {
+  .footer-main {
+    padding: 2.5rem 0 1.25rem;
+    text-align: center;
+  }
+
+  /* Brand col: full width, centered */
+  .footer-col:first-child {
+    border-bottom: 1px solid #1e293b;
+    padding-bottom: 1.5rem;
+  }
+
+  /* Social icons centered */
+  .footer-socials {
+    justify-content: center;
+  }
+
+  /* Quick Links + Contact side by side (xs={6}) */
+  .footer-links {
+    text-align: center;
+  }
+
+  .footer-links a {
+    font-size: 0.85rem;
+  }
+
+  .footer-bottom {
+    font-size: 0.72rem;
+    padding-top: 1rem;
+  }
+}

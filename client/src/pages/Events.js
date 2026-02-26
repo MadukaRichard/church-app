@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Card, Button, Badge, Spinner, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Card, Button, Badge, Modal } from 'react-bootstrap';
 import api from '../api';
 import SkeletonLoader from '../components/SkeletonLoader';
 

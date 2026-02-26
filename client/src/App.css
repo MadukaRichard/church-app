@@ -2,6 +2,37 @@
   text-align: center;
 }
 
+/* ===== REMOVE BOOTSTRAP HAMBURGER BORDER ON CLICK ===== */
+.navbar-toggler,
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler:focus-visible,
+.navbar-toggler:focus-within {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-color: transparent !important;
+  --bs-navbar-toggler-focus-width: 0 !important;
+}
+
+/* ===== HAMBURGER MENU OVERLAY (no content shift) ===== */
+@media (max-width: 991px) {
+  .navbar {
+    position: relative;
+  }
+  .navbar-collapse {
+    position: absolute !important;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    z-index: 1050;
+    background-color: #212529;
+    padding: 0 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+  }
+}
+
 /* ===== GLOBAL MOBILE RESPONSIVENESS ===== */
 
 /* Hero sections */
@@ -57,13 +88,6 @@
   }
   .modal-body-padding {
     padding: 1.5rem !important;
-  }
-}
-
-/* Footer columns: center text on mobile */
-@media (max-width: 767px) {
-  footer .col-md-4 {
-    text-align: center;
   }
 }
 

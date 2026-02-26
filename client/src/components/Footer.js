@@ -1,54 +1,63 @@
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import './Footer.css';
 
 const Footer = () => {
   return (
-    // "text-light" handles the main headings
-    <footer className="bg-dark text-light py-5">
+    <footer className="footer-main">
       <Container>
-        <Row>
-          {/* Column 1 */}
-          <Col md={4} className="mb-4">
-            <h5 className="fw-bold text-uppercase">The Shepherd's Fold</h5>
-            {/* CHANGED: text-muted -> text-white-50 */}
-            <p className="small text-white-50">
-              A digital church family connecting believers worldwide. 
-              Join us online every Sunday.
+        <Row className="footer-row">
+
+          {/* Brand */}
+          <Col xs={12} md={4} className="footer-col">
+            <h5 className="footer-brand">The Shepherd's Fold</h5>
+            <p className="footer-tagline">
+              A community of believers rooted in faith, love, and purpose.
+              Join us every Sunday — online or in person.
             </p>
+            {/* Social Icons */}
+            <div className="footer-socials">
+              <a href="https://facebook.com" target="_blank" rel="noreferrer" className="footer-social-link" aria-label="Facebook">
+                <i className="fa-brands fa-facebook"></i>
+              </a>
+              <a href="https://youtube.com" target="_blank" rel="noreferrer" className="footer-social-link" aria-label="YouTube">
+                <i className="fa-brands fa-youtube"></i>
+              </a>
+              <a href="https://instagram.com" target="_blank" rel="noreferrer" className="footer-social-link" aria-label="Instagram">
+                <i className="fa-brands fa-instagram"></i>
+              </a>
+            </div>
           </Col>
 
-          {/* Column 2 */}
-          <Col md={4} className="mb-4">
-            <h5 className="fw-bold text-uppercase">Quick Links</h5>
-            <ul className="list-unstyled">
-              {/* CHANGED: text-muted -> text-white-50 for all links */}
-              <li><Link to="/" className="text-decoration-none text-white-50">Home</Link></li>
-              <li><Link to="/sermons" className="text-decoration-none text-white-50">Sermons</Link></li>
-              <li><Link to="/give" className="text-decoration-none text-white-50">Give</Link></li>
-              <li><Link to="/signup" className="text-decoration-none text-white-50">Join the Family</Link></li>
+          {/* Quick Links */}
+          <Col xs={6} md={4} className="footer-col">
+            <h6 className="footer-heading">Quick Links</h6>
+            <ul className="footer-links">
+              <li><Link to="/">Home</Link></li>
+              <li><Link to="/sermons">Sermons</Link></li>
+              <li><Link to="/events">Events</Link></li>
+              <li><Link to="/give">Give</Link></li>
             </ul>
           </Col>
 
-          {/* Column 3 */}
-          <Col md={4} className="mb-4">
-            <h5 className="fw-bold text-uppercase">Connect</h5>
-            {/* CHANGED: text-muted -> text-white-50 */}
-            <p className="small text-white-50 mb-1">Email: hello@church.com</p>
-            <p className="small text-white-50">Phone: +234 800 CHURCH</p>
-            <div>
-              <span className="me-3"><i className="fa-brands fa-facebook"></i></span>
-              <span className="me-3"><i className="fa-brands fa-youtube"></i></span>
-              <span className="me-3"><i className="fa-brands fa-instagram"></i></span>
-            </div>
+          {/* Contact */}
+          <Col xs={6} md={4} className="footer-col">
+            <h6 className="footer-heading">Contact Us</h6>
+            <ul className="footer-links">
+              <li>
+                <a href="mailto:hello@church.com">hello@church.com</a>
+              </li>
+              <li>
+                <a href="tel:+2348001">+234 800 CHURCH</a>
+              </li>
+            </ul>
           </Col>
+
         </Row>
-        
-        <hr className="border-secondary" />
-        
-        {/* CHANGED: text-muted -> text-white-50 */}
-        <div className="text-center small text-white-50">
-          &copy; {new Date().getFullYear()} The Shepherd's Fold. All Rights Reserved.
+
+        <div className="footer-bottom">
+          <span>&copy; {new Date().getFullYear()} The Shepherd's Fold &mdash; All Rights Reserved.</span>
         </div>
       </Container>
     </footer>
