@@ -1,24 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Button, Table, Image, Alert } from 'react-bootstrap';
+import { Row, Col, Form, Button, Table, Image, Alert, Modal } from 'react-bootstrap';
 import api from '../api';
+
+const EMPTY_FORM = {
+  title: '', subtitle: '', image: '', link: '',
+  buttonText: 'Learn More', textColor: 'white', overlayOpacity: 0.5
+};
 
 const AdminHome = () => {
   const [slides, setSlides] = useState([]);
-  const [form, setForm] = useState({
-    title: '',
-    subtitle: '',
-    image: '',
-    link: '',
-    buttonText: 'Learn More',
-    textColor: 'white',
-    overlayOpacity: 0.5
-  });
+  const [form, setForm] = useState({ ...EMPTY_FORM });
   const [message, setMessage] = useState('');
+  const [editingId, setEditingId] = useState(null);
 
-  // 1. FETCH SLIDES
-  useEffect(() => {
-    fetchSlides();
-  }, []);
+  // Delete confirmation state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  useEffect(() => { fetchSlides(); }, []);
 
   const fetchSlides = async () => {
     try {
@@ -29,33 +28,56 @@ const AdminHome = () => {
     }
   };
 
-  // 2. HANDLE INPUT
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // 3. ADD NEW SLIDE
-  const handleAdd = async () => {
+  // ADD or UPDATE
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!form.title || !form.image) return alert("Title and Image are required");
-
     try {
-      await api.post('/hero', form);
-      setMessage('✅ Slide Added!');
-      fetchSlides(); // Refresh list
-      setForm({ title: '', subtitle: '', image: '', link: '', buttonText: 'Learn More', textColor: 'white', overlayOpacity: 0.5 }); // Reset form
+      if (editingId) {
+        const res = await api.put(`/hero/${editingId}`, form);
+        setSlides(slides.map(s => s._id === editingId ? res.data : s));
+        setMessage('✅ Slide Updated!');
+        setEditingId(null);
+      } else {
+        await api.post('/hero', form);
+        setMessage('✅ Slide Added!');
+        fetchSlides();
+      }
+      setForm({ ...EMPTY_FORM });
       setTimeout(() => setMessage(''), 3000);
     } catch (err) {
       console.error(err);
-      alert("Error adding slide. Is the server running?");
+      alert("Error saving slide. Is the server running?");
     }
   };
 
-  // 4. DELETE SLIDE
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this slide?")) return;
+  // EDIT — load into form
+  const handleEdit = (slide) => {
+    setEditingId(slide._id);
+    setForm({
+      title: slide.title, subtitle: slide.subtitle || '', image: slide.image,
+      link: slide.link || '', buttonText: slide.buttonText || 'Learn More',
+      textColor: slide.textColor || 'white', overlayOpacity: slide.overlayOpacity ?? 0.5
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm({ ...EMPTY_FORM });
+  };
+
+  // DELETE with confirmation
+  const confirmDelete = (id) => { setDeleteTarget(id); setShowDeleteModal(true); };
+  const handleDelete = async () => {
     try {
-      await api.delete(`/hero/${id}`);
-      setSlides(slides.filter(s => s._id !== id));
+      await api.delete(`/hero/${deleteTarget}`);
+      setSlides(slides.filter(s => s._id !== deleteTarget));
+      setShowDeleteModal(false);
+      setDeleteTarget(null);
     } catch (err) {
       console.error(err);
     }
@@ -63,12 +85,11 @@ const AdminHome = () => {
 
   return (
     <Row>
-      {/* LEFT: FORM */}
-      <Col md={4} className="border-end pe-4">
-        <h4 className="mb-3 text-primary">➕ Add Hero Slide</h4>
+      <Col md={4} className="border-end pe-4 admin-form-col">
+        <h4 className="mb-3 text-primary">{editingId ? 'Edit Slide' : 'Add Hero Slide'}</h4>
         {message && <Alert variant="success">{message}</Alert>}
         
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-2">
             <Form.Label>Main Headline</Form.Label>
             <Form.Control name="title" value={form.title} onChange={handleChange} placeholder="e.g. Welcome Home" />
@@ -102,19 +123,23 @@ const AdminHome = () => {
               </Form.Group>
             </Col>
           </Row>
-          <Button variant="primary" className="w-100 mt-3" onClick={handleAdd}>Publish Slide</Button>
+          <Button variant={editingId ? 'warning' : 'primary'} className="w-100 mt-3" type="submit">
+            {editingId ? 'Save Changes' : 'Publish Slide'}
+          </Button>
+          {editingId && (
+            <Button variant="outline-secondary" className="w-100 mt-2" onClick={cancelEdit}>Cancel Edit</Button>
+          )}
         </Form>
       </Col>
 
-      {/* RIGHT: LIST */}
-      <Col md={8} className="ps-4">
+      <Col md={8} className="ps-md-4 admin-list-col">
         <h4 className="mb-3">Active Slides</h4>
         <Table hover responsive>
           <thead>
             <tr>
               <th width="60">Img</th>
               <th>Content</th>
-              <th>Action</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -126,13 +151,28 @@ const AdminHome = () => {
                   <small className="text-muted">{slide.subtitle}</small>
                 </td>
                 <td>
-                  <Button size="sm" variant="outline-danger" onClick={() => handleDelete(slide._id)}>🗑</Button>
+                  <div className="d-flex gap-1">
+                    <Button size="sm" variant="outline-primary" onClick={() => handleEdit(slide)}>Edit</Button>
+                    <Button size="sm" variant="outline-danger" onClick={() => confirmDelete(slide._id)}>Delete</Button>
+                  </div>
                 </td>
               </tr>
             ))}
           </tbody>
         </Table>
       </Col>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Body className="text-center p-4">
+          <h4 className="fw-bold mb-3">Are you sure you want to delete this slide?</h4>
+          <p className="text-muted mb-4">This action cannot be undone.</p>
+          <div className="d-flex justify-content-center gap-3">
+            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+            <Button variant="danger" onClick={handleDelete}>Yes, Delete</Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Row>
   );
 };

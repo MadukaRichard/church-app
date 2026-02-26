@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Button, Table, Image, Alert } from 'react-bootstrap';
+import { Row, Col, Form, Button, Table, Image, Alert, Modal } from 'react-bootstrap';
 import api from '../api';
 
-const AdminGiving = () => {
-  // --- STATE MANAGEMENT ---
-  const [causes, setCauses] = useState([]);
-  const [form, setForm] = useState({
-    title: '',
-    desc: '',
-    story: '', // <--- NEW: Store the long story here
-    image: ''
-  });
-  const [showSuccess, setShowSuccess] = useState(false);
+const EMPTY_FORM = { title: '', desc: '', story: '', image: '' };
 
-  // --- 1. LOAD DATA FROM BACKEND ---
+const AdminGiving = () => {
+  const [causes, setCauses] = useState([]);
+  const [form, setForm] = useState({ ...EMPTY_FORM });
+  const [showSuccess, setShowSuccess] = useState(false);
+  const [successMsg, setSuccessMsg] = useState('');
+  const [editingId, setEditingId] = useState(null);
+
+  // Delete confirmation state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
   useEffect(() => {
     const fetchCauses = async () => {
       try {
@@ -26,114 +27,119 @@ const AdminGiving = () => {
     fetchCauses();
   }, []);
 
-  // --- 2. HANDLE INPUT CHANGES ---
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // --- 3. ADD NEW CAUSE (POST to Database) ---
-  const handleAdd = async () => {
-    // Basic validation
+  // ADD or UPDATE
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!form.title || !form.desc) return alert("Please fill in a Title and Description");
-
     try {
-      const res = await api.post('/giving', form);
-      
-      // Update UI with the new item from the database
-      setCauses([res.data, ...causes]);
-
-      // Reset Form & Show Success
-      setForm({ title: '', desc: '', story: '', image: '' });
+      if (editingId) {
+        const res = await api.put(`/giving/${editingId}`, form);
+        setCauses(causes.map(c => c._id === editingId ? res.data : c));
+        setSuccessMsg('✅ Cause updated!');
+        setEditingId(null);
+      } else {
+        const res = await api.post('/giving', form);
+        setCauses([res.data, ...causes]);
+        setSuccessMsg('✅ Cause added successfully!');
+      }
+      setForm({ ...EMPTY_FORM });
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
-      
     } catch (err) {
       console.error(err);
       alert("Failed to save. Is the server running?");
     }
   };
 
-  // --- 4. DELETE CAUSE (DELETE from Database) ---
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this cause?")) {
-      try {
-        await api.delete(`/giving/${id}`);
-        // Remove from UI
-        setCauses(causes.filter(c => c._id !== id));
-      } catch (err) {
-        console.error(err);
-        alert("Failed to delete.");
-      }
+  // EDIT — load into form
+  const handleEdit = (cause) => {
+    setEditingId(cause._id);
+    setForm({
+      title: cause.title, desc: cause.desc || '',
+      story: cause.story || '', image: cause.image || ''
+    });
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm({ ...EMPTY_FORM });
+  };
+
+  // DELETE with confirmation
+  const confirmDelete = (id) => { setDeleteTarget(id); setShowDeleteModal(true); };
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/giving/${deleteTarget}`);
+      setCauses(causes.filter(c => c._id !== deleteTarget));
+      setShowDeleteModal(false);
+      setDeleteTarget(null);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete.");
     }
   };
 
   return (
     <Row>
-      {/* --- LEFT COLUMN: THE FORM --- */}
-      <Col md={4} className="border-end pe-4">
-        <h4 className="mb-3 text-success">➕ Add Donation Cause</h4>
+      <Col md={4} className="border-end pe-4 admin-form-col">
+        <h4 className="mb-3 text-success">{editingId ? 'Edit Cause' : 'Add Donation Cause'}</h4>
         
-        {showSuccess && <Alert variant="success">Cause added successfully!</Alert>}
+        {showSuccess && <Alert variant="success">{successMsg}</Alert>}
 
-        <Form>
+        <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3">
             <Form.Label className="fw-bold">Cause Title</Form.Label>
             <Form.Control 
-              type="text" 
-              name="title"
+              type="text" name="title"
               placeholder="e.g. Building Fund" 
-              value={form.title}
-              onChange={handleChange}
+              value={form.title} onChange={handleChange}
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label className="fw-bold">Short Description</Form.Label>
             <Form.Control 
-              as="textarea" 
-              name="desc"
-              rows={2} 
+              as="textarea" name="desc" rows={2} 
               placeholder="One sentence summary..." 
-              value={form.desc}
-              onChange={handleChange}
+              value={form.desc} onChange={handleChange}
             />
           </Form.Group>
 
-          {/* --- NEW: STORY INPUT --- */}
           <Form.Group className="mb-3">
             <Form.Label className="fw-bold">Full Story (Mini-Blog)</Form.Label>
             <Form.Control 
-              as="textarea" 
-              name="story"
-              rows={5} 
+              as="textarea" name="story" rows={5} 
               placeholder="Write the full details, testimony, or need here..." 
-              value={form.story}
-              onChange={handleChange}
+              value={form.story} onChange={handleChange}
             />
           </Form.Group>
 
           <Form.Group className="mb-3">
             <Form.Label className="fw-bold">Image URL (Optional)</Form.Label>
             <Form.Control 
-              type="text" 
-              name="image"
+              type="text" name="image"
               placeholder="https://..." 
-              value={form.image}
-              onChange={handleChange}
+              value={form.image} onChange={handleChange}
             />
             <Form.Text className="text-muted">
               Paste a link to an image from Unsplash or your server.
             </Form.Text>
           </Form.Group>
 
-          <Button variant="success" className="w-100 fw-bold" onClick={handleAdd}>
-            Publish Cause
+          <Button variant={editingId ? 'warning' : 'success'} className="w-100 fw-bold" type="submit">
+            {editingId ? 'Save Changes' : 'Publish Cause'}
           </Button>
+          {editingId && (
+            <Button variant="outline-secondary" className="w-100 mt-2" onClick={cancelEdit}>Cancel Edit</Button>
+          )}
         </Form>
       </Col>
 
-      {/* --- RIGHT COLUMN: THE LIST --- */}
-      <Col md={8} className="ps-4">
+      <Col md={8} className="ps-md-4 admin-list-col">
         <h4 className="mb-3">Active Causes</h4>
         
         {causes.length === 0 ? (
@@ -164,13 +170,14 @@ const AdminGiving = () => {
                     <small className="text-muted">{cause.desc}</small>
                   </td>
                   <td className="text-end">
-                    <Button 
-                      variant="outline-danger" 
-                      size="sm" 
-                      onClick={() => handleDelete(cause._id)}
-                    >
-                      <i className="bi bi-trash"></i> Delete
-                    </Button>
+                    <div className="d-flex gap-1 justify-content-end">
+                      <Button variant="outline-primary" size="sm" onClick={() => handleEdit(cause)}>
+                        Edit
+                      </Button>
+                      <Button variant="outline-danger" size="sm" onClick={() => confirmDelete(cause._id)}>
+                        Delete
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -178,6 +185,18 @@ const AdminGiving = () => {
           </Table>
         )}
       </Col>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Body className="text-center p-4">
+          <h4 className="fw-bold mb-3">Are you sure you want to delete this cause?</h4>
+          <p className="text-muted mb-4">This action cannot be undone.</p>
+          <div className="d-flex justify-content-center gap-3">
+            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+            <Button variant="danger" onClick={handleDelete}>Yes, Delete</Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Row>
   );
 };

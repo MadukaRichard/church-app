@@ -112,13 +112,14 @@ const Give = () => {
                       style={{ cursor: 'pointer', transition: '0.3s' }}
                     >
                       <Row className="g-0 align-items-center">
-                        <Col md={4}>
+                        <Col xs={12} md={4}>
                           <Card.Img 
                             src={cause.image || 'https://via.placeholder.com/150'} 
-                            style={{ height: '140px', objectFit: 'cover' }} 
+                            className="give-cause-img"
+                            style={{ height: '140px', objectFit: 'cover', width: '100%' }} 
                           />
                         </Col>
-                        <Col md={8}>
+                        <Col xs={12} md={8}>
                           <Card.Body>
                             <div className="d-flex justify-content-between align-items-center">
                               <h5 className="fw-bold mb-1">{cause.title}</h5>

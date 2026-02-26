@@ -105,7 +105,7 @@ const Events = () => {
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Body className="p-0 border-0 rounded-3 overflow-hidden">
            {selectedEvent.image && (
-             <div style={{ height: '300px', overflow: 'hidden' }}>
+             <div className="modal-event-img" style={{ height: '300px', overflow: 'hidden' }}>
                <img 
                  src={selectedEvent.image} 
                  alt={selectedEvent.title} 
@@ -113,7 +113,7 @@ const Events = () => {
                />
              </div>
            )}
-           <div className="p-5">
+           <div className="p-3 p-md-5">
              <Badge bg="primary" className="mb-3">{selectedEvent.date}</Badge>
              <h2 className="fw-bold mb-4" style={{ color: DARK }}>{selectedEvent.title}</h2>
              

@@ -3,6 +3,16 @@ import { Container, Row, Col, Card, Form, InputGroup, Button, Badge, Spinner } f
 import api from '../api';
 import SkeletonLoader from '../components/SkeletonLoader';
 
+const extractVideoId = (input) => {
+  if (!input) return '';
+  const match = input.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  if (match) return match[1];
+  const idMatch = input.match(/^[a-zA-Z0-9_-]{11}$/);
+  return idMatch ? idMatch[0] : input.trim();
+};
+
 const Sermons = () => {
   const [sermons, setSermons] = useState([]); // Stores the real data
   const [loading, setLoading] = useState(true); // Shows a spinner while loading
@@ -67,7 +77,7 @@ const Sermons = () => {
                 <Card className="h-100 shadow-sm border-0 hover-effect">
                   <div className="ratio ratio-16x9">
                     <iframe 
-                      src={`https://www.youtube.com/embed/${sermon.videoLink}`} 
+                      src={`https://www.youtube.com/embed/${extractVideoId(sermon.videoLink)}`} 
                       title={sermon.title} 
                       allowFullScreen
                       style={{ borderRadius: '5px 5px 0 0' }}
@@ -100,7 +110,7 @@ const Sermons = () => {
                       variant="outline-danger" 
                       size="sm" 
                       className="w-100 fw-bold" 
-                      href={`https://www.youtube.com/watch?v=${sermon.videoLink}`} 
+                      href={`https://www.youtube.com/watch?v=${extractVideoId(sermon.videoLink)}`} 
                       target="_blank"
                     >
                       <i className="bi bi-play-circle me-2"></i> Watch on YouTube

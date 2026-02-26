@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Row, Col, Button, Card, Spinner, Badge, Modal } from 'react-bootstrap';
+import { Container, Row, Col, Button, Card, Carousel, Badge, Modal } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import api from '../api';
 import { motion } from 'framer-motion';
 import SkeletonLoader from '../components/SkeletonLoader';
 
 const Home = () => {
-  const [heroSlide, setHeroSlide] = useState(null);
+  const [heroSlides, setHeroSlides] = useState([]);
   const [featuredCause, setFeaturedCause] = useState(null);
   const [events, setEvents] = useState([]); 
   const [loading, setLoading] = useState(true);
@@ -24,7 +24,7 @@ const Home = () => {
     const fetchData = async () => {
       try {
         const heroRes = await api.get('/hero');
-        if (heroRes.data.length > 0) setHeroSlide(heroRes.data[0]);
+        setHeroSlides(heroRes.data);
 
         const giveRes = await api.get('/giving');
         if (giveRes.data.length > 0) setFeaturedCause(giveRes.data[0]);
@@ -73,53 +73,66 @@ const Home = () => {
   return (
     <div style={{ overflowX: 'hidden', backgroundColor: '#fff', fontFamily: 'sans-serif' }}>
       
-      {/* --- 1. HERO SECTION --- */}
-      <div 
-        style={{ 
-          backgroundImage: `linear-gradient(rgba(15, 23, 42, ${heroSlide?.overlayOpacity ?? 0.5}), rgba(15, 23, 42, ${heroSlide?.overlayOpacity ?? 0.5})), url(${heroSlide?.image || 'https://via.placeholder.com/1500'})`,
-          height: '85vh', 
-          backgroundAttachment: 'scroll', 
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          textAlign: 'center',
-          color: heroSlide?.textColor || 'white'
-        }}
+      {/* --- 1. HERO CAROUSEL --- */}
+      <Carousel 
+        slide
+        interval={5000} 
+        controls={false} 
+        indicators={heroSlides.length > 1}
+        pause="hover"
+        touch={true}
+        className="hero-carousel"
       >
-        <Container>
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }} 
-            animate={{ opacity: 1, y: 0 }} 
-            transition={{ duration: 0.8 }}
-          >
-            <h1 className="display-2 fw-bolder mb-3"style={{ opacity: 0.7 }}>
-              {heroSlide?.title || "WELCOME HOME"}
-            </h1>
-            <p className="lead mb-4 fs-5 fw-semibold" style={{ opacity: 1.0 }}>
-              {heroSlide?.subtitle || "A place to belong, believe, and become."}
-            </p>
-            
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              {/* MOBILE FIX: Smaller padding on mobile (px-4), larger on desktop (px-md-5) */}
-              <Button 
-                size="lg" 
-                className="rounded-pill px-4 py-2 px-md-5 py-md-3 fw-bold border-0 shadow" 
-                style={{ backgroundColor: ACCENT, color: 'white' }}
-                as={Link} 
-                to="/sermons"
-              >
-                Watch Latest Sermon
-              </Button>
-            </motion.div>
-          </motion.div>
-        </Container>
-      </div>
+        {(heroSlides.length > 0 ? heroSlides : [null]).map((slide, idx) => (
+          <Carousel.Item key={slide?._id || idx}>
+            <div 
+              style={{ 
+                backgroundImage: `linear-gradient(rgba(15, 23, 42, ${slide?.overlayOpacity ?? 0.5}), rgba(15, 23, 42, ${slide?.overlayOpacity ?? 0.5})), url(${slide?.image || 'https://via.placeholder.com/1500'})`,
+                minHeight: '75vh', 
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                color: slide?.textColor || 'white',
+                padding: '2rem 0'
+              }}
+            >
+              <Container>
+                <motion.div 
+                  initial={{ opacity: 0, y: 30 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  transition={{ duration: 0.8 }}
+                >
+                  <h1 className="display-2 fw-bolder mb-3" style={{ opacity: 0.9 }}>
+                    {slide?.title || "WELCOME HOME"}
+                  </h1>
+                  <p className="lead mb-4 fs-5 fw-semibold" style={{ opacity: 1.0 }}>
+                    {slide?.subtitle || "A place to belong, believe, and become."}
+                  </p>
+                  
+                  <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                    <Button 
+                      size="lg" 
+                      className="rounded-pill px-4 py-2 px-md-5 py-md-3 fw-bold border-0 shadow" 
+                      style={{ backgroundColor: ACCENT, color: 'white' }}
+                      as={Link} 
+                      to={slide?.link || "/sermons"}
+                    >
+                      {slide?.buttonText || "Watch Latest Sermon"}
+                    </Button>
+                  </motion.div>
+                </motion.div>
+              </Container>
+            </div>
+          </Carousel.Item>
+        ))}
+      </Carousel>
 
       {/* --- 2. EVENTS SECTION --- */}
       {events.length > 0 && (
-        <div style={{ backgroundColor: LIGHT_BG, padding: '5rem 0' }}>
+        <div style={{ backgroundColor: LIGHT_BG, padding: '3rem 0' }}>
           <Container>
             <motion.div 
               initial={{ opacity: 0 }} 
@@ -186,7 +199,7 @@ const Home = () => {
 
       {/* --- 3. FEATURED CAUSE --- */}
       {featuredCause && (
-        <div style={{ backgroundColor: '#fff', padding: '6rem 0' }}>
+        <div style={{ backgroundColor: '#fff', padding: '3rem 0' }}>
           <Container>
             <Row className="align-items-center">
               <Col md={6} className="mb-5 mb-md-0 order-md-2">
@@ -236,7 +249,7 @@ const Home = () => {
       )}
 
       {/* --- 4. VISION / FOOTER CALL TO ACTION --- */}
-      <div style={{ backgroundColor: DARK, color: 'white', padding: '5rem 0' }} className="text-center">
+      <div style={{ backgroundColor: DARK, color: 'white', padding: '3rem 0' }} className="text-center">
         <Container>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -265,7 +278,7 @@ const Home = () => {
       <Modal show={showModal} onHide={() => setShowModal(false)} size="lg" centered>
         <Modal.Body className="p-0 border-0 rounded-3 overflow-hidden">
           {selectedEvent.image && (
-             <div style={{ height: '300px', overflow: 'hidden' }}>
+             <div className="modal-event-img" style={{ height: '300px', overflow: 'hidden' }}>
                <img 
                  src={selectedEvent.image} 
                  alt={selectedEvent.title} 
@@ -273,7 +286,7 @@ const Home = () => {
                />
              </div>
           )}
-          <div className="p-5">
+          <div className="p-3 p-md-5">
              <Badge bg="primary" className="mb-3">{selectedEvent.date}</Badge>
              <h2 className="fw-bold mb-4" style={{ color: DARK }}>{selectedEvent.title}</h2>
              

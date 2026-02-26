@@ -2,37 +2,110 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
+/* ===== GLOBAL MOBILE RESPONSIVENESS ===== */
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* Hero sections */
+@media (max-width: 768px) {
+  .display-2 {
+    font-size: 2rem !important;
+  }
+  .display-4 {
+    font-size: 1.75rem !important;
+  }
+  .display-6 {
+    font-size: 1.5rem !important;
+  }
+  .lead {
+    font-size: 1rem !important;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* Admin Dashboard tabs: stack vertically on mobile */
+@media (max-width: 576px) {
+  .nav-tabs .nav-link {
+    font-size: 0.8rem;
+    padding: 0.5rem 0.4rem;
+  }
 }
 
-.App-link {
-  color: #61dafb;
+/* Admin form/list columns: full-width on mobile */
+@media (max-width: 767px) {
+  .admin-form-col {
+    border-right: none !important;
+    border-bottom: 1px solid #dee2e6;
+    padding-bottom: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-right: 0 !important;
+  }
+  .admin-list-col {
+    padding-left: 0 !important;
+  }
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Give page cause cards: stack image on mobile */
+@media (max-width: 767px) {
+  .give-cause-img {
+    height: 180px !important;
+    width: 100% !important;
   }
-  to {
-    transform: rotate(360deg);
+}
+
+/* Modal image height on mobile */
+@media (max-width: 576px) {
+  .modal-event-img {
+    height: 180px !important;
   }
+  .modal-body-padding {
+    padding: 1.5rem !important;
+  }
+}
+
+/* Footer columns: center text on mobile */
+@media (max-width: 767px) {
+  footer .col-md-4 {
+    text-align: center;
+  }
+}
+
+/* Prevent horizontal overflow globally */
+html, body {
+  overflow-x: hidden;
+}
+
+/* ===== HERO CAROUSEL STYLING ===== */
+.hero-carousel .carousel-control-prev,
+.hero-carousel .carousel-control-next {
+  width: 5%;
+  opacity: 0.6;
+  transition: opacity 0.3s;
+}
+.hero-carousel .carousel-control-prev:hover,
+.hero-carousel .carousel-control-next:hover {
+  opacity: 1;
+}
+@media (max-width: 768px) {
+  .hero-carousel .carousel-control-prev,
+  .hero-carousel .carousel-control-next {
+    width: 10%;
+  }
+}
+.hero-carousel .carousel-indicators {
+  margin-bottom: 1.5rem;
+}
+.hero-carousel .carousel-indicators [data-bs-target] {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  background-color: transparent;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+.hero-carousel .carousel-indicators .active {
+  background-color: white;
+  opacity: 1;
+  transform: scale(1.2);
+}
+.hero-carousel .carousel-item {
+  transition: transform 0.8s ease-in-out !important;
 }

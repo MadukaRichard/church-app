@@ -1,23 +1,36 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Col, Form, Button, Table, Alert, Badge } from 'react-bootstrap';
+import { Row, Col, Form, Button, Table, Alert, Badge, Modal } from 'react-bootstrap';
 import api from '../api';
 
-const AdminSermons = () => {
-  // --- STATE ---
-  const [sermons, setSermons] = useState([]); // Store the list of sermons
-  const [formData, setFormData] = useState({
-    title: '',
-    preacher: '',
-    videoLink: '',
-    category: '',
-    description: ''
-  });
-  const [message, setMessage] = useState(null);
+// Extracts YouTube video ID from any format:
+// - Full URL: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+// - Short URL: https://youtu.be/dQw4w9WgXcQ
+// - Embed URL: https://www.youtube.com/embed/dQw4w9WgXcQ
+// - Just the ID: dQw4w9WgXcQ
+const extractVideoId = (input) => {
+  if (!input) return '';
+  const match = input.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  );
+  if (match) return match[1];
+  // If no URL pattern matched, assume it's already just the ID
+  const idMatch = input.match(/^[a-zA-Z0-9_-]{11}$/);
+  return idMatch ? idMatch[0] : input.trim();
+};
 
-  // --- 1. FETCH SERMONS ON LOAD ---
-  useEffect(() => {
-    fetchSermons();
-  }, []);
+const EMPTY_FORM = { title: '', preacher: '', videoLink: '', category: '', description: '' };
+
+const AdminSermons = () => {
+  const [sermons, setSermons] = useState([]);
+  const [formData, setFormData] = useState({ ...EMPTY_FORM });
+  const [message, setMessage] = useState(null);
+  const [editingId, setEditingId] = useState(null);
+
+  // Delete confirmation state
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+
+  useEffect(() => { fetchSermons(); }, []);
 
   const fetchSermons = async () => {
     try {
@@ -29,40 +42,53 @@ const AdminSermons = () => {
     }
   };
 
-  // --- 2. HANDLE INPUT ---
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- 3. SUBMIT (ADD SERMON) ---
+  // ADD or UPDATE
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await api.post('/sermons', formData);
-      
-      // Success!
-      setMessage({ type: 'success', text: 'Success! Sermon added.' });
-      setFormData({ title: '', preacher: '', videoLink: '', category: '', description: '' }); // Clear form
-      
-      // Update the list immediately
-      setSermons([res.data, ...sermons]);
-      
-      // Clear success message after 3 seconds
+      if (editingId) {
+        const res = await api.put(`/sermons/${editingId}`, formData);
+        setSermons(sermons.map(s => s._id === editingId ? res.data : s));
+        setMessage({ type: 'success', text: '✅ Sermon updated!' });
+        setEditingId(null);
+      } else {
+        const res = await api.post('/sermons', formData);
+        setMessage({ type: 'success', text: 'Success! Sermon added.' });
+        setSermons([res.data, ...sermons]);
+      }
+      setFormData({ ...EMPTY_FORM });
       setTimeout(() => setMessage(null), 3000);
-
     } catch (err) {
       setMessage({ type: 'danger', text: 'Error: Could not save sermon.' });
     }
   };
 
-  // --- 4. DELETE SERMON ---
-  const handleDelete = async (id) => {
-    if(!window.confirm("Are you sure you want to delete this sermon?")) return;
+  // EDIT — load into form
+  const handleEdit = (sermon) => {
+    setEditingId(sermon._id);
+    setFormData({
+      title: sermon.title, preacher: sermon.preacher, videoLink: sermon.videoLink,
+      category: sermon.category, description: sermon.description || ''
+    });
+  };
 
+  const cancelEdit = () => {
+    setEditingId(null);
+    setFormData({ ...EMPTY_FORM });
+  };
+
+  // DELETE with confirmation
+  const confirmDelete = (id) => { setDeleteTarget(id); setShowDeleteModal(true); };
+  const handleDelete = async () => {
     try {
-      await api.delete(`/sermons/${id}`);
-      // Remove from UI
-      setSermons(sermons.filter(s => s._id !== id));
+      await api.delete(`/sermons/${deleteTarget}`);
+      setSermons(sermons.filter(s => s._id !== deleteTarget));
+      setShowDeleteModal(false);
+      setDeleteTarget(null);
     } catch (err) {
       alert("Failed to delete sermon.");
     }
@@ -72,9 +98,8 @@ const AdminSermons = () => {
     <Row>
       <h2 className="mb-4">Admin Dashboard: Sermons</h2>
       
-      {/* --- LEFT COLUMN: ADD SERMON --- */}
-      <Col md={4} className="border-end pe-4">
-        <h4 className="text-primary mb-3">➕ Add New Sermon</h4>
+      <Col md={4} className="border-end pe-4 admin-form-col">
+        <h4 className="text-primary mb-3">{editingId ? 'Edit Sermon' : 'Add New Sermon'}</h4>
         {message && <Alert variant={message.type}>{message.text}</Alert>}
 
         <Form onSubmit={handleSubmit} className="p-3 shadow-sm bg-light rounded">
@@ -89,9 +114,21 @@ const AdminSermons = () => {
           </Form.Group>
 
           <Form.Group className="mb-3">
-            <Form.Label>YouTube Video ID</Form.Label>
-            <Form.Control name="videoLink" value={formData.videoLink} onChange={handleChange} required placeholder="e.g. dQw4w9WgXcQ" />
-            <Form.Text className="text-muted">Only the ID (the part after v=)</Form.Text>
+            <Form.Label>YouTube Video Link or ID</Form.Label>
+            <Form.Control name="videoLink" value={formData.videoLink} onChange={handleChange} required placeholder="e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ" />
+            <Form.Text className="text-muted">Paste a full YouTube URL or just the video ID</Form.Text>
+            {formData.videoLink && extractVideoId(formData.videoLink) && (
+              <div className="mt-2">
+                <div className="ratio ratio-16x9" style={{ maxWidth: '100%' }}>
+                  <iframe
+                    src={`https://www.youtube.com/embed/${extractVideoId(formData.videoLink)}`}
+                    title="Video Preview"
+                    allowFullScreen
+                    style={{ borderRadius: '5px' }}
+                  ></iframe>
+                </div>
+              </div>
+            )}
           </Form.Group>
 
           <Form.Group className="mb-3">
@@ -104,12 +141,16 @@ const AdminSermons = () => {
             <Form.Control as="textarea" name="description" value={formData.description} onChange={handleChange} rows={2} />
           </Form.Group>
 
-          <Button variant="primary" type="submit" className="w-100">Upload Sermon</Button>
+          <Button variant={editingId ? 'warning' : 'primary'} type="submit" className="w-100">
+            {editingId ? 'Save Changes' : 'Upload Sermon'}
+          </Button>
+          {editingId && (
+            <Button variant="outline-secondary" className="w-100 mt-2" onClick={cancelEdit}>Cancel Edit</Button>
+          )}
         </Form>
       </Col>
 
-      {/* --- RIGHT COLUMN: SERMON LIST --- */}
-      <Col md={8} className="ps-4">
+      <Col md={8} className="ps-md-4 admin-list-col">
         <h4 className="mb-3">Library ({sermons.length})</h4>
         
         {sermons.length === 0 ? (
@@ -121,7 +162,7 @@ const AdminSermons = () => {
                 <th>Thumbnail</th>
                 <th>Details</th>
                 <th>Category</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -129,9 +170,9 @@ const AdminSermons = () => {
                 <tr key={sermon._id}>
                   <td>
                     <img 
-                      src={`https://img.youtube.com/vi/${sermon.videoLink}/default.jpg`} 
+                      src={`https://img.youtube.com/vi/${extractVideoId(sermon.videoLink)}/mqdefault.jpg`} 
                       alt="thumbnail"
-                      style={{ width: '80px', borderRadius: '5px' }}
+                      style={{ width: '100px', borderRadius: '5px' }}
                     />
                   </td>
                   <td>
@@ -140,9 +181,14 @@ const AdminSermons = () => {
                   </td>
                   <td><Badge bg="secondary">{sermon.category}</Badge></td>
                   <td>
-                    <Button variant="outline-danger" size="sm" onClick={() => handleDelete(sermon._id)}>
-                      🗑 Delete
-                    </Button>
+                    <div className="d-flex gap-1">
+                      <Button variant="outline-primary" size="sm" onClick={() => handleEdit(sermon)}>
+                        Edit
+                      </Button>
+                      <Button variant="outline-danger" size="sm" onClick={() => confirmDelete(sermon._id)}>
+                        Delete
+                      </Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -150,6 +196,18 @@ const AdminSermons = () => {
           </Table>
         )}
       </Col>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Body className="text-center p-4">
+          <h4 className="fw-bold mb-3">Are you sure you want to delete this sermon?</h4>
+          <p className="text-muted mb-4">This action cannot be undone.</p>
+          <div className="d-flex justify-content-center gap-3">
+            <Button variant="outline-secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+            <Button variant="danger" onClick={handleDelete}>Yes, Delete</Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </Row>
   );
 };

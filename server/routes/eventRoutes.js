@@ -22,6 +22,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+// 2.5 UPDATE EVENT
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedEvent = await Event.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json(updatedEvent);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 // 3. DELETE EVENT
 router.delete('/:id', async (req, res) => {
   try {

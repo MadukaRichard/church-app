@@ -23,6 +23,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+// UPDATE SLIDE
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedSlide = await HeroSlide.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json(updatedSlide);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 // DELETE SLIDE
 router.delete('/:id', async (req, res) => {
   try {

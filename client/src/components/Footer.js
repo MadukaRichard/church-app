@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const Footer = () => {
   return (
     // "text-light" handles the main headings
-    <footer className="bg-dark text-light py-5 cd c">
+    <footer className="bg-dark text-light py-5">
       <Container>
         <Row>
           {/* Column 1 */}
@@ -37,9 +37,9 @@ const Footer = () => {
             <p className="small text-white-50 mb-1">Email: hello@church.com</p>
             <p className="small text-white-50">Phone: +234 800 CHURCH</p>
             <div>
-              <span className="me-3"><i class="fa-brands fa-facebook"></i></span>
-              <span className="me-3"><i class="fa-brands fa-youtube"></i></span>
-              <span className="me-3"><i class="fa-brands fa-instagram"></i></span>
+              <span className="me-3"><i className="fa-brands fa-facebook"></i></span>
+              <span className="me-3"><i className="fa-brands fa-youtube"></i></span>
+              <span className="me-3"><i className="fa-brands fa-instagram"></i></span>
             </div>
           </Col>
         </Row>

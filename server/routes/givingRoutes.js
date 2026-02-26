@@ -22,6 +22,16 @@ router.post('/', async (req, res) => {
   }
 });
 
+// 2.5 UPDATE a cause
+router.put('/:id', async (req, res) => {
+  try {
+    const updatedCause = await GiveCause.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.status(200).json(updatedCause);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
 // 3. DELETE a cause
 router.delete('/:id', async (req, res) => {
   try {
