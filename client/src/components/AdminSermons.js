@@ -35,7 +35,7 @@ const AdminSermons = () => {
   const fetchSermons = async () => {
     try {
       const res = await api.get('/sermons');
-      setSermons(res.data);
+      setSermons(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error("Error fetching sermons:", err);
       setMessage({ type: 'danger', text: 'Error loading sermons. Is the backend running?' });

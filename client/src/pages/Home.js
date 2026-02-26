@@ -89,7 +89,7 @@ const Home = () => {
           <Carousel.Item key={slide?._id || idx}>
             <div 
               style={{ 
-                backgroundImage: `linear-gradient(rgba(15, 23, 42, ${slide?.overlayOpacity ?? 0.5}), rgba(15, 23, 42, ${slide?.overlayOpacity ?? 0.5})), url(${slide?.image || 'https://via.placeholder.com/1500'})`,
+                backgroundImage: `linear-gradient(rgba(15, 23, 42, ${slide?.overlayOpacity ?? 0.5}), rgba(15, 23, 42, ${slide?.overlayOpacity ?? 0.5})), url(${slide?.image || 'https://placehold.co/1500x800/0F172A/white?text=Welcome'})`,
                 minHeight: '75vh', 
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',

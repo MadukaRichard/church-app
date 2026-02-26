@@ -26,7 +26,7 @@ const Give = () => {
       try {
         // A. Fetch Causes
         const causesRes = await api.get('/giving');
-        setCauses(causesRes.data);
+        setCauses(Array.isArray(causesRes.data) ? causesRes.data : []);
         
         // Automatically select the first cause if one exists
         if (causesRes.data.length > 0) {

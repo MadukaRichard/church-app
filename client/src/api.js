@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-// This is your "Central Command" for talking to the backend.
-// In development, requests go through the proxy in package.json (http://localhost:5000).
-// In production, change this to your live server URL (e.g. https://yourserver.com/api).
+// In development, requests go through the CRA proxy (package.json).
+// In production, requests go to the live Render backend.
 const api = axios.create({
-  baseURL: '/api'
+  baseURL: process.env.NODE_ENV === 'production'
+    ? 'https://church-app-8y7l.onrender.com/api'
+    : '/api'
 });
 
 export default api;

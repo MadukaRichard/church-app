@@ -19,7 +19,7 @@ const AdminGiving = () => {
     const fetchCauses = async () => {
       try {
         const res = await api.get('/giving');
-        setCauses(res.data);
+        setCauses(Array.isArray(res.data) ? res.data : []);
       } catch (err) {
         console.error("Error loading causes:", err);
       }

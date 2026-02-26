@@ -22,7 +22,7 @@ const AdminHome = () => {
   const fetchSlides = async () => {
     try {
       const res = await api.get('/hero');
-      setSlides(res.data);
+      setSlides(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
     }

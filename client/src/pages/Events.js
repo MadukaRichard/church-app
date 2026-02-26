@@ -20,7 +20,7 @@ const Events = () => {
     const fetchEvents = async () => {
       try {
         const res = await api.get('/events');
-        setEvents(res.data);
+        setEvents(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
       } catch (err) {
         console.error(err);

@@ -23,7 +23,7 @@ const Sermons = () => {
     const fetchSermons = async () => {
       try {
         const res = await api.get('/sermons');
-        setSermons(res.data);
+        setSermons(Array.isArray(res.data) ? res.data : []);
         setLoading(false);
       } catch (err) {
         console.error("Error fetching sermons:", err);

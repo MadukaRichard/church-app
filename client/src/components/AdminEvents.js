@@ -14,7 +14,7 @@ const AdminEvents = () => {
   const [deleteTarget, setDeleteTarget] = useState(null);
 
   useEffect(() => {
-    api.get('/events').then(res => setEvents(res.data));
+    api.get('/events').then(res => setEvents(Array.isArray(res.data) ? res.data : []));
   }, []);
 
   // ADD or UPDATE
