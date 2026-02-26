@@ -16,7 +16,7 @@ const authRoute = require('./routes/authRoutes');
 const app = express();
 
 // 3. MIDDLEWARE
-app.use(cors());
+app.use(cors({ origin: 'https://church-app-1-jlnj.onrender.com' }));
 app.use(express.json());
 
 // 4. USE ROUTES (All app.use calls must be here)
