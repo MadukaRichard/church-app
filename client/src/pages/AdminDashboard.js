@@ -22,7 +22,7 @@ const AdminDashboard = () => {
     <Container className="my-5 px-3">
       <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-          <h1 className="fw-bold fs-3 fs-md-1">Admin Command Center</h1>
+          <h1 className="fw-bold fs-3 fs-md-1">Admin Dashboard.</h1>
         </div>
         <Button variant="outline-danger" onClick={() => setShowLogoutModal(true)}>Logout</Button>
       </div>
@@ -32,29 +32,29 @@ const AdminDashboard = () => {
           <Tabs
             activeKey={key}
             onSelect={(k) => setKey(k)}
-            className="mb-3 bg-light p-2 rounded-top"
+            className="mb-0 bg-light px-2 pt-2 rounded-top"
             fill
           >
-            <Tab eventKey="home" title=" Home Page">
-              <div className="p-3">
+            <Tab eventKey="home" title="Home Page">
+              <div className="p-3 p-md-4">
                 <AdminHome />
               </div>
             </Tab>
 
-            <Tab eventKey="sermons" title=" Sermons">
-              <div className="p-3">
+            <Tab eventKey="sermons" title="Sermons">
+              <div className="p-3 p-md-4">
                 <AdminSermons />
               </div>
             </Tab>
 
             <Tab eventKey="events" title="Events">
-              <div className="p-3">
+              <div className="p-3 p-md-4">
                 <AdminEvents />
               </div>
             </Tab>
 
-            <Tab eventKey="giving" title=" Giving">
-              <div className="p-3">
+            <Tab eventKey="giving" title="Giving">
+              <div className="p-3 p-md-4">
                 <AdminGiving />
               </div>
             </Tab>

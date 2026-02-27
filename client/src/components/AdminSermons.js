@@ -96,8 +96,6 @@ const AdminSermons = () => {
 
   return (
     <Row>
-      <h2 className="mb-4">Admin Dashboard: Sermons</h2>
-      
       <Col md={4} className="border-end pe-4 admin-form-col">
         <h4 className="text-primary mb-3">{editingId ? 'Edit Sermon' : 'Add New Sermon'}</h4>
         {message && <Alert variant={message.type}>{message.text}</Alert>}
@@ -150,7 +148,7 @@ const AdminSermons = () => {
         </Form>
       </Col>
 
-      <Col md={8} className="ps-md-4 admin-list-col">
+      <Col md={8} className="ps-md-4 mt-4 mt-md-0 admin-list-col">
         <h4 className="mb-3">Library ({sermons.length})</h4>
         
         {sermons.length === 0 ? (

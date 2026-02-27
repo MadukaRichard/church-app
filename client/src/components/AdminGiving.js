@@ -139,7 +139,7 @@ const AdminGiving = () => {
         </Form>
       </Col>
 
-      <Col md={8} className="ps-md-4 admin-list-col">
+      <Col md={8} className="ps-md-4 mt-4 mt-md-0 admin-list-col">
         <h4 className="mb-3">Active Causes</h4>
         
         {causes.length === 0 ? (

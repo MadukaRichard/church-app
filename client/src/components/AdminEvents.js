@@ -64,9 +64,9 @@ const AdminEvents = () => {
 
   return (
     <Row>
-      <Col md={4} className="mb-4 mb-md-0">
+      <Col md={4} className="border-end pe-4 admin-form-col">
         <Card className="p-3 shadow-sm border-0">
-          <h5 className="mb-3">{editingId ? 'Edit Event' : 'Add Event'}</h5>
+          <h5 className="mb-3 text-primary">{editingId ? 'Edit Event' : 'Add Event'}</h5>
           <Form onSubmit={handleSubmit}>
             <Form.Control className="mb-2" placeholder="Title (e.g. Worship Night)" value={form.title} onChange={e => setForm({...form, title: e.target.value})} />
             <Form.Control className="mb-2" placeholder="Date/Time (e.g. Friday 6PM)" value={form.date} onChange={e => setForm({...form, date: e.target.value})} />
@@ -81,7 +81,8 @@ const AdminEvents = () => {
           </Form>
         </Card>
       </Col>
-      <Col md={8}>
+      <Col md={8} className="ps-md-4 mt-4 mt-md-0 admin-list-col">
+        <h4 className="mb-3">Upcoming Events ({events.length})</h4>
         <Table hover responsive>
           <thead><tr><th>Event</th><th>Date</th><th>Actions</th></tr></thead>
           <tbody>

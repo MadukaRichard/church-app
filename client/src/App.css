@@ -63,10 +63,22 @@
 @media (max-width: 767px) {
   .admin-form-col {
     border-right: none !important;
-    border-bottom: 1px solid #dee2e6;
-    padding-bottom: 1.5rem;
-    margin-bottom: 1.5rem;
+    border-bottom: 3px solid #0d6efd;
+    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
     padding-right: 0 !important;
+    position: relative;
+  }
+  .admin-form-col::after {
+    content: 'Published Content ↓';
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #6c757d;
+    text-align: center;
   }
   .admin-list-col {
     padding-left: 0 !important;
@@ -94,6 +106,13 @@
 /* Prevent horizontal overflow globally */
 html, body {
   overflow-x: hidden;
+}
+
+/* ===== HERO SLIDE MOBILE PADDING ===== */
+@media (max-width: 767px) {
+  .hero-slide {
+    padding: 5rem 0 !important;
+  }
 }
 
 /* ===== HERO CAROUSEL STYLING ===== */
